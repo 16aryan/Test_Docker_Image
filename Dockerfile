@@ -1,19 +1,21 @@
-
-# Use an official Python image
 FROM python:3.12-slim
 
 # Set working directory
 WORKDIR /app
 
-ENV FLASK_APP=app.py
-ENV FLASK_RUN_HOST=0.0.0.0
-# Copy all files
+# Install dependencies first to leverage Docker caching
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the code
 COPY . .
 
-# Install Flask
-RUN pip install --no-cache-dir flask
+# Set environment variables
+ENV FLASK_APP=app.py
+ENV FLASK_RUN_HOST=0.0.0.0
+ENV FLASK_RUN_PORT=5001
 
-# Expose the port
+# Expose port
 EXPOSE 5001
 
 # Run the app
